@@ -73,6 +73,7 @@ class IntSet
   end
 end
 
+# require "byebug"
 class ResizingIntSet
 
   attr_reader :store
@@ -84,12 +85,16 @@ class ResizingIntSet
   end
 
   def insert(num)
-    if !self.include?(num)
-      self[num] << num
-      @count += 1
-    end
+    if @count != self.num_buckets
+      if !self.include?(num)
+        self[num] << num
+        @count += 1
+      end
+    else
+      self.resize!
     #check if count >= num
     #t = resize
+    end
   end
   
   def remove(num)
@@ -124,9 +129,26 @@ class ResizingIntSet
   end
   
   def resize!
-    if @count == num_buckets
-      self.num_buckets = self.num_buckets * 2
+
+    # debugger
+    a = [30]
+    @count = 0
+    @store.each do |bucket|
+      bucket.each do |el|
+        a.concat([el]) 
+      end
     end
+
+    # a << a.last + 1
+
+    # debugger
+
+    @store = Array.new((num_buckets * 2)) { Array.new }
+    a.each do |el|
+      self.insert(el)
+    end
+
+    
   end
   #create new set w/ new num of buckets
   #put ele into the new set in the correct places
